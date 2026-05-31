@@ -413,6 +413,15 @@ self: super:
       '';
     }) super.happy;
 
+    # Remove references to other libraries on aarch64-darwin
+    hadolint = overrideCabal (old: {
+      postInstall = ''
+        remove-references-to -t ${self.ShellCheck} "$out/bin/hadolint"
+
+        ${old.postInstall or ""}
+      '';
+    }) (justStaticExecutables super.hadolint);
+
     # https://github.com/fpco/unliftio/issues/87
     unliftio = dontCheck super.unliftio;
     # This is the same issue as above; the rio tests call functions in unliftio
